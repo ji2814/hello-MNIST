@@ -18,8 +18,8 @@ lr = 0.9
 
 # 定义模型、损失函数和优化器
 # net = LeNet5()
-net = MLP()
-# net = ResNet()
+# net = MLP()
+net = ResNet()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(net.parameters())
 
@@ -39,5 +39,5 @@ for epoch in range(num_epochs):
         fina_loss = loss.item()
 
 # 保存模型
-current_dir = os.path.dirname(os.path.abspath(__file__)) + os.sep
-torch.save(net.state_dict(), current_dir + 'model.pth')
+current_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save') + os.sep
+torch.save(net.state_dict(), current_dir + net._get_name() + '.pth')
