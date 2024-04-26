@@ -6,6 +6,7 @@ import torchvision
 from models.MLP import MLP
 from models.LeNet5 import LeNet5
 from models.ResNet import ResNet
+from models.GRU import GRU
 
 # 加载MNIST数据集
 train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=torchvision.transforms.ToTensor(), download=True)
@@ -16,10 +17,13 @@ train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64,
 num_epochs = 1
 lr = 0.9
 
-# 定义模型、损失函数和优化器
+# 定义模型
 # net = LeNet5()
 # net = MLP()
-net = ResNet()
+# net = ResNet()
+net = GRU()
+
+# 定义损失函数和优化器
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(net.parameters())
 
@@ -28,7 +32,7 @@ fina_loss = 0
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
         optimizer.zero_grad()
-
+        
         outputs = net(images)
         loss = criterion(outputs, labels)
         loss.backward()
