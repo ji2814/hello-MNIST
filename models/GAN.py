@@ -5,6 +5,7 @@ import torch.nn as nn
 class Generator(nn.Module):
     def __init__(self, input_dim):
         super(Generator, self).__init__()
+
         self.fc1 = nn.Linear(input_dim, 32 * 32)
         self.br1 = nn.Sequential(
             nn.BatchNorm1d(1024),
@@ -25,18 +26,20 @@ class Generator(nn.Module):
             nn.Sigmoid()
         )
 
-    def forward(self, x):
-        x = self.br1(self.fc1(x))
-        x = self.br2(self.fc2(x))
-        x = x.reshape(-1, 128, 7, 7)
-        x = self.conv1(x)
-        output = self.conv2(x)
+    def forward(self, X):
+        X = self.br1(self.fc1(X))
+        X = self.br2(self.fc2(X))
+        X = X.reshape(-1, 128, 7, 7)
+        X = self.conv1(X)
+        output = self.conv2(X)
+
         return output
 
 # 判别器
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
+
         self.conv1 = nn.Sequential(
             nn.Conv2d(1, 32, 5, stride=1),
             nn.LeakyReLU(0.2)
@@ -56,12 +59,13 @@ class Discriminator(nn.Module):
             nn.Sigmoid()
         )
 
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.pl1(x)
-        x = self.conv2(x)
-        x = self.pl2(x)
-        x = x.view(x.shape[0], -1)
-        x = self.fc1(x)
-        output = self.fc2(x)
+    def forward(self, X):
+        X = self.conv1(X)
+        X = self.pl1(X)
+        X = self.conv2(X)
+        X = self.pl2(X)
+        X = X.view(X.shape[0], -1)
+        X = self.fc1(X)
+        output = self.fc2(X)
+
         return output

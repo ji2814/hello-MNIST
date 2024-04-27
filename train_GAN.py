@@ -8,6 +8,7 @@ from models.GAN import Generator,Discriminator
 #定义超参数
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
+lr = 0.0002
 num_epochs = 1
 input_dim = 100
 batch_size = 64
@@ -22,35 +23,38 @@ G = Generator(input_dim).to(device)
 D = Discriminator().to(device)
 
 # 定义损失函数和优化器
-criterion_G = nn.CrossEntropyLoss()
-criterion_D = nn.CrossEntropyLoss()
+criterion = nn.BCELoss()
 
-optim_G = torch.optim.Adam(G.parameters(), lr=0.0002)
-optim_D = torch.optim.Adam(D.parameters(), lr=0.0002)
+optim_G = torch.optim.Adam(G.parameters(), lr=lr)
+optim_D = torch.optim.Adam(D.parameters(), lr=lr)
 
 # 训练函数
 def train(x):
     '''判别器'''
     real_x = x.to(device)
+
+    optim_D.zero_grad()
+    
     real_output = D(real_x)
-    real_loss = criterion_D(real_output, torch.ones_like(real_output).to(device))
+    real_loss = criterion(real_output, torch.ones_like(real_output).to(device))
 
     fake_x = G(torch.randn([batch_size, input_dim]).to(device)).detach()
     fake_output = D(fake_x)
-    fake_loss = criterion_D(fake_output, torch.zeros_like(fake_output).to(device))
+    fake_loss = criterion(fake_output, torch.zeros_like(fake_output).to(device))
 
     loss_D = real_loss + fake_loss
 
-    optim_D.zero_grad()
     loss_D.backward()
     optim_D.step()
 
     '''生成器'''
+    optim_G.zero_grad()
+
     fake_x = G(torch.randn([batch_size, input_dim]).to(device))
     fake_output = D(fake_x)
-    loss_G = criterion_G(fake_output, torch.ones_like(fake_output).to(device))
+    loss_G = criterion(fake_output, torch.ones_like(fake_output).to(device))
 
-    optim_G.zero_grad()
+
     loss_G.backward()
     optim_G.step()
 

@@ -7,6 +7,7 @@ from models.MLP import MLP
 from models.LeNet5 import LeNet5
 from models.ResNet import ResNet
 from models.GRU import GRU
+from models.ViT import ViT
 
 #定义超参数
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -21,10 +22,13 @@ train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 
 # 定义模型
-# net = LeNet5().to(device)
-# net = MLP().to(device)
-# net = ResNet().to(device)
-net = GRU().to(device)
+# net = LeNet5()
+# net = MLP()
+# net = ResNet()
+# net = GRU()
+net = ViT()
+
+net = net.to(device)
 
 # 定义损失函数和优化器
 criterion = nn.CrossEntropyLoss()
