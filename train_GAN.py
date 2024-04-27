@@ -1,0 +1,72 @@
+import os
+import torch
+import torch.nn as nn
+import torchvision
+
+from models.GAN import Generator,Discriminator
+
+#定义超参数
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
+num_epochs = 1
+input_dim = 100
+batch_size = 64
+
+# 加载MNIST数据集
+train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=torchvision.transforms.ToTensor(), download=True)
+# 定义数据加载器
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+
+# 定义模型
+G = Generator(input_dim).to(device)
+D = Discriminator().to(device)
+
+# 定义损失函数和优化器
+criterion_G = nn.CrossEntropyLoss()
+criterion_D = nn.CrossEntropyLoss()
+
+optim_G = torch.optim.Adam(G.parameters(), lr=0.0002)
+optim_D = torch.optim.Adam(D.parameters(), lr=0.0002)
+
+# 训练函数
+def train(x):
+    '''判别器'''
+    real_x = x.to(device)
+    real_output = D(real_x)
+    real_loss = criterion_D(real_output, torch.ones_like(real_output).to(device))
+
+    fake_x = G(torch.randn([batch_size, input_dim]).to(device)).detach()
+    fake_output = D(fake_x)
+    fake_loss = criterion_D(fake_output, torch.zeros_like(fake_output).to(device))
+
+    loss_D = real_loss + fake_loss
+
+    optim_D.zero_grad()
+    loss_D.backward()
+    optim_D.step()
+
+    '''生成器'''
+    fake_x = G(torch.randn([batch_size, input_dim]).to(device))
+    fake_output = D(fake_x)
+    loss_G = criterion_G(fake_output, torch.ones_like(fake_output).to(device))
+
+    optim_G.zero_grad()
+    loss_G.backward()
+    optim_G.step()
+
+    return loss_D, loss_G
+
+# 训练过程
+print(device)
+for epoch in range(num_epochs):
+    loss_D, loss_G = 0, 0
+    for i, (images, _) in enumerate(train_loader):
+        loss_D, loss_G = train(images)
+        
+        if (i+1) % 100 == 0:
+            print('Epoch [{}/{}], Step [{}/{}], Loss_D: {:.4f}, Loss_G: {:.4f}'.format(epoch+1, 
+                num_epochs, i+1, len(train_loader), loss_D, loss_G))
+
+# 保存模型
+current_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save') + os.sep
+torch.save(G.state_dict(), current_dir + 'Generator.pth')
