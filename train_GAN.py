@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torchvision
 
-from models.GAN import Generator,Discriminator
+from models._import import Generator, Discriminator
 
 #定义超参数
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
