@@ -1,7 +1,6 @@
 import os
-import torch
+import torch, torchvision
 import torch.nn as nn
-import torchvision
 
 from models._import import LeNet5, MLP, ResNet, GRU, ViT
 
@@ -18,7 +17,7 @@ train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 
 # 定义模型
-net = MLP()
+net = ViT()
 
 net = net.to(device)
 
