@@ -1,3 +1,7 @@
-models\__pycache__\*
+Generate\save
+Generate\models\__pycache__
 
 tmp.py
+
+Recognize\save
+Recognize\models\__pycache__
