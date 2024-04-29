@@ -54,7 +54,6 @@ def train(x):
     fake_output = D(fake_x)
     loss_G = criterion(fake_output, torch.ones_like(fake_output).to(device))
 
-
     loss_G.backward()
     optim_G.step()
 

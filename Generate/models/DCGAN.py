@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-# =================================================生成器================================================================
+# 生成器，输入100噪声输出（1，28，28）
 class Generator(nn.Module):
     def __init__(self, input_dim):
         super(Generator, self).__init__()
@@ -31,10 +31,10 @@ class Generator(nn.Module):
         x = x.reshape(-1, 128, 7, 7)
         x = self.conv1(x)
         output = self.conv2(x)
+        
         return output
 
-
-# =================================================判别器================================================================
+#  辨别器,输入（1，28，28）
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
@@ -65,4 +65,5 @@ class Discriminator(nn.Module):
         x = x.view(x.shape[0], -1)
         x = self.fc1(x)
         output = self.fc2(x)
+
         return output
