@@ -12,7 +12,7 @@ test_dataset = torchvision.datasets.MNIST(root='./data', train=False, transform=
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
 
 # 定义模型
-net = GRU()
+net = ViT()
 
 # 加载模型参数
 model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save', net._get_name() + '.pth')
@@ -38,8 +38,8 @@ _, (example_images, example_targets) = next(examples)
 
 # 显示图片
 fig = plt.figure()
-for i in range(6):
-    plt.subplot(2,3,i+1)
+for i in range(9):
+    plt.subplot(3,3,i+1)
     plt.tight_layout()
     plt.imshow(example_images[i][0], cmap='gray', interpolation='none')
 

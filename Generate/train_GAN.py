@@ -9,8 +9,8 @@ from models._import import Generator, Discriminator
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 lr = 0.0002
-num_epochs = 1
-input_dim = 28
+num_epochs = 10
+input_dim = 100
 batch_size = 64
 
 # 加载MNIST数据集
