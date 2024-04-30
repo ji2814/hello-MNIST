@@ -5,6 +5,7 @@ import torch.nn as nn
 class Generator(nn.Module):
     def __init__(self, input_dim):
         super(Generator, self).__init__()
+
         self.fc1 = nn.Linear(input_dim, 32 * 32)
         self.br1 = nn.Sequential(
             nn.BatchNorm1d(1024),
@@ -38,6 +39,7 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
+        
         self.conv1 = nn.Sequential(
             nn.Conv2d(1, 32, 5, stride=1),
             nn.LeakyReLU(0.2)
