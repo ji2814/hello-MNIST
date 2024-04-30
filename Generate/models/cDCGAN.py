@@ -19,8 +19,7 @@ class Generator(nn.Module):
         super(Generator, self).__init__()  
 
         self.embed_dim = embed_dim
-        #self.embed = nn.Embedding(embed_dim, num_class=10)
-        self.embed = nn.Embedding(num_embeddings=10, embedding_dim=embed_dim)
+        self.embed = nn.Embedding(embed_dim, num_class=10)
 
         self.fc1 = nn.Linear(input_dim + embed_dim, 32 * 32)  # 拼接噪声和条件变量  
         self.br1 = nn.Sequential(  
