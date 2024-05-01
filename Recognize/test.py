@@ -12,7 +12,7 @@ test_dataset = torchvision.datasets.MNIST(root='./data', train=False, transform=
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
 
 # 定义模型
-net = ViT()
+net = LeNet5()
 
 # 加载模型参数
 model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save', net._get_name() + '.pth')

@@ -6,7 +6,6 @@ from models.cDCGAN import Generator
 
 # 定义超参数
 input_dim = 100
-batch_size = 64
 
 # 定义模型
 G = Generator(input_dim)
@@ -16,26 +15,25 @@ G.eval()
 model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save', 'Generator_cGAN.pth')
 G.load_state_dict(torch.load(model_dir)) 
   
-# 创建一个空的图像网格来保存所有生成的图像  
-images = []  
-  
-# 生成随机噪声和条件变量  
-batch_size = 16  
-noise = torch.randn(batch_size, 100)
-cond = torch.randint(0, 10, (batch_size,)) # 随机选择0到9之间的数字  
-  
-# 生成图像  
-with torch.no_grad():  
-    images = G(noise, cond)  
-  
-# 因为输出是在[-1, 1]范围内的，我们可以直接将其转换为matplotlib可显示的格式  
-images = images.cpu().numpy() * 0.5 + 0.5  # 转换到[0, 1]范围  
-images = images.squeeze(1)  # 移除通道维度（如果有的话）  
+# 设置显示
+_, axs = plt.subplots(nrows=10, ncols=10, figsize=(10, 10), subplot_kw={'xticks': [], 'yticks': []}) 
 
-# 绘制图像  
-fig, axes = plt.subplots(4, 4, figsize=(8, 8), subplot_kw={'xticks': [], 'yticks': []})  
-for i, ax in enumerate(axes.flat):  
-    ax.imshow(images[i], cmap='gray')  
+for label in range(10):
+        # 生成随机噪声和条件变量  
+        noise = torch.randn(10, input_dim)
+        label_tensor = torch.tensor([label] * 10, dtype=torch.long)
+
+        # 生成图像  
+        with torch.no_grad():  
+            imgs = G(noise, label_tensor)  
+        imgs = imgs.view(10, 1, 28, 28).squeeze(1).cpu().numpy()
+
+        # 显示图像  
+        for column in range(10):  
+            axs[label][column].imshow(imgs[column], cmap='gray')   
+            axs[label][column].axis('off')  # 关闭坐标轴 
+
+plt.tight_layout()  
 plt.show()
 
 

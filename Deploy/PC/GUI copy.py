@@ -39,10 +39,16 @@ def recognize_digit():
  
     input_tensor = torch.from_numpy(input_data)
 
-    # 使用模型进行预测
-    with torch.no_grad():
-        output = model(input_tensor)
-        prediction = output.argmax(dim=1).item()
+    '''使用ONNX模型预测'''
+    # 设置ONNX模型文件的路径  
+    onnx_model_path = os.path.join(os.getcwd(), "Deploy", "save", "lenet5.onnx")  
+    
+    # 创建ONNX Runtime会话  
+    ort_session = ort.InferenceSession(onnx_model_path)  
+    
+    # 获取输入和输出的名称  
+    input_name = ort_session.get_inputs()[0].name  
+    output_name = ort_session.get_outputs()[0].name 
 
     result_font = font.Font(size=15)
     # 显示预测结果

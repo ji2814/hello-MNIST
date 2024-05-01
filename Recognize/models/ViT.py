@@ -17,6 +17,7 @@ class TransformerBlock(nn.Module):
     def forward(self, x, mask=None):  
         x = x + self.attn(self.norm1(x), self.norm1(x), self.norm1(x), attn_mask=mask)[0]  
         x = x + self.mlp(self.norm2(x))  
+        
         return x  
 
 class Encoder(nn.Module):

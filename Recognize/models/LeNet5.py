@@ -24,5 +24,3 @@ class LeNet5(nn.Module):
         
         return output
     
-# net = LeNet5()
-# print(net)
