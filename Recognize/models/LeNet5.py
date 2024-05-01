@@ -14,14 +14,15 @@ class LeNet5(nn.Module):
         self.fc2 = nn.Linear(in_features=120, out_features=84)
         self.fc3 = nn.Linear(in_features=84, out_features=10)
         
-    def forward(self, X):
-        x = self.pool1(torch.relu(self.conv1(X)))
-        x = self.pool2(torch.relu(self.conv2(X)))
+    def forward(self, x):
+        x = self.pool1(torch.relu(self.conv1(x)))
+        x = self.pool2(torch.relu(self.conv2(x)))
         x = x.view(-1, 16 * 4 * 4)
-        x = torch.relu(self.fc1(X))
-        x = torch.relu(self.fc2(X))
-        x = self.fc3(X)
-        return X
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        output = self.fc3(x)
+        
+        return output
     
 # net = LeNet5()
 # print(net)

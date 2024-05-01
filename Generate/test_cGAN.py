@@ -14,26 +14,28 @@ G.eval()
 
 # 加载模型参数
 model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save', 'Generator_cGAN.pth')
-G.load_state_dict(torch.load(model_dir))
+G.load_state_dict(torch.load(model_dir)) 
+  
+# 创建一个空的图像网格来保存所有生成的图像  
+images = []  
+  
+# 生成随机噪声和条件变量  
+batch_size = 16  
+noise = torch.randn(batch_size, 100)
+cond = torch.randint(0, 10, (batch_size,)) # 随机选择0到9之间的数字  
+  
+# 生成图像  
+with torch.no_grad():  
+    images = G(noise, cond)  
+  
+# 因为输出是在[-1, 1]范围内的，我们可以直接将其转换为matplotlib可显示的格式  
+images = images.cpu().numpy() * 0.5 + 0.5  # 转换到[0, 1]范围  
+images = images.squeeze(1)  # 移除通道维度（如果有的话）  
 
-# 测试cGAN模型
-def test_cGAN():
-    pass
-    with torch.no_grad():
-        noise = torch.randn(1, input_dim)
-        
-        cond = torch.randint(0, 10, (batch_size,))
-        print(cond)
-        img = G(noise, cond)
-
-        img = img.squeeze()
-        img = img.reshape(28, 28).numpy()
-
-    plt.imshow(img, cmap='gray')
-    plt.show()
-
-
-# 调用函数来生成并显示图像  
-test_cGAN(G, input_dim)
+# 绘制图像  
+fig, axes = plt.subplots(4, 4, figsize=(8, 8), subplot_kw={'xticks': [], 'yticks': []})  
+for i, ax in enumerate(axes.flat):  
+    ax.imshow(images[i], cmap='gray')  
+plt.show()
 
 

@@ -7,4 +7,4 @@ Recognize/save
 Recognize/models/__pycache__
 
 Generate/models/difusion
-Deploy
+#Deploy

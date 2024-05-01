@@ -17,7 +17,7 @@ train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 
 # 定义模型
-net = ViT()
+net = LeNet5()
 
 net = net.to(device)
 

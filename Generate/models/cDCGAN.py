@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn  
   
 class Embedding(nn.Module):
-    def __init__(self, embed_dim, num_class=10):
+    def __init__(self, embed_dim, num_class):
         super().__init__()
 
-        self.embed = nn.Embedding(num_class, embed_dim)
+        self.embed = nn.Embedding(num_embeddings=num_class, embedding_dim=embed_dim)
 
     # x[batch_size] -> output[batch_size, embed_dim]
     def forward(self, x):
@@ -13,13 +13,13 @@ class Embedding(nn.Module):
 
         return output
     
-# CGAN生成器，输入噪声和条件变量，输出（1，28，28）  
+# cGAN生成器，输入噪声和条件变量，输出（1，28，28）  
 class Generator(nn.Module):  
     def __init__(self, input_dim, embed_dim=64):  
         super(Generator, self).__init__()  
 
         self.embed_dim = embed_dim
-        self.embed = nn.Embedding(embed_dim, num_class=10)
+        self.embed = Embedding(embed_dim=embed_dim, num_class=10)
 
         self.fc1 = nn.Linear(input_dim + embed_dim, 32 * 32)  # 拼接噪声和条件变量  
         self.br1 = nn.Sequential(  
@@ -58,7 +58,7 @@ class Discriminator(nn.Module):
     def __init__(self, embed_dim=64):  
         super(Discriminator, self).__init__()  
         
-        self.embed = Embedding(embed_dim=embed_dim) # 嵌入层
+        self.embed = Embedding(embed_dim=embed_dim, num_class=10) # 嵌入层
         self.conv1 = nn.Sequential(  
             nn.Conv2d(embed_dim + 1, 32, 5, stride=1),  # cond和images在通道方向拼接  
             nn.LeakyReLU(0.2)  

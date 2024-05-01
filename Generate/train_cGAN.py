@@ -9,7 +9,7 @@ from models.cDCGAN import Generator, Discriminator
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 lr = 0.0002
-num_epochs = 10
+num_epochs = 1
 input_dim = 100
 embed_dim = 64
 batch_size = 64
@@ -17,7 +17,7 @@ batch_size = 64
 # 加载MNIST数据集
 train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=torchvision.transforms.ToTensor(), download=True)
 # 定义数据加载器
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, drop_last = True)
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
 # 定义模型
 G = Generator(input_dim, embed_dim=embed_dim).to(device)

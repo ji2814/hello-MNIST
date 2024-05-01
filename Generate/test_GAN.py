@@ -40,4 +40,3 @@ def test_GAN(G, input_dim, batch_size=100):
 # 调用函数来生成并显示图像  
 test_GAN(G, input_dim)
 
-
