@@ -2,19 +2,18 @@ import os, sys
 import tkinter as tk
 import numpy as np
 from PIL import Image, ImageDraw
-import torch
 from tkinter import font
 import onnxruntime as ort  
 
-# 加载模型
-model_dir = os.getcwd() + os.sep + 'Recognize' + os.sep + 'models'
-sys.path.append(model_dir)
-from LeNet5 import LeNet5
-model = LeNet5()
+# 设置ONNX模型文件的路径  
+onnx_model_path = os.path.join(os.getcwd(), "Deploy", "save", "lenet5.onnx")  
 
-# 加载pth文件
-pth_dir = os.path.join(os.getcwd(), "Recognize", "save", "LeNet5.pth")
-model.load_state_dict(torch.load(pth_dir)) 
+# 创建ONNX Runtime会话  
+ort_session = ort.InferenceSession(onnx_model_path)  
+
+# 获取输入和输出的名称  
+input_name = ort_session.get_inputs()[0].name  
+output_name = ort_session.get_outputs()[0].name 
 
 # 创建画布和绘图工具
 canvas_width = 280
@@ -29,24 +28,43 @@ def draw(event):
     x, y = event.x, event.y
     canvas.create_text(x, y, text='●', font='Helvetica 20', fill='white')  # 将椭圆填充颜色设为白色
     img_draw.ellipse([(x - 5, y - 5), (x + 5, y + 5)], fill='white')  # 将椭圆描边颜色设为白色
- 
+
+def softmax(x):  
+    # 应用softmax函数  
+    exps = np.exp(x - np.max(x))  # 减去max(outputs)是为了防止数值溢出  
+    probs = exps / np.sum(exps) 
+    # 获取预测标签（概率最大的索引）  
+    return probs 
+
 def recognize_digit():
     # 从画布中获取图像，调整尺寸为模型所需的大小
     image = img.crop((0, 0, 300, 300)).resize((28, 28)).convert('L')
+
     '''数据预处理'''
     input_data = np.array(image).reshape((1, 1, 28, 28)).astype('float32')
     input_data = input_data / 255.0  # 将像素值缩放到0到1之间
- 
-    input_tensor = torch.from_numpy(input_data)
 
-    # 使用模型进行预测
-    with torch.no_grad():
-        output = model(input_tensor)
-        prediction = output.argmax(dim=1).item()
+    '''使用ONNX模型预测'''
+    # 设置ONNX模型文件的路径  
+    onnx_model_path = os.path.join(os.getcwd(), "Deploy", "save", "lenet5.onnx")  
+    
+    # 创建ONNX Runtime会话  
+    ort_session = ort.InferenceSession(onnx_model_path)  
+    
+    # 获取输入和输出的名称  
+    input_name = ort_session.get_inputs()[0].name  
+    output_name = ort_session.get_outputs()[0].name 
 
-    result_font = font.Font(size=15)
+    # 推理获取输出
+    outputs = ort_session.run([output_name], {input_name: input_data})    
+    # 假设模型只有一个输出，并且我们想要获取这个输出  
+    output_data = outputs[0]  
+
+    probs = softmax(output_data)
+    predicted = np.argmax(probs)  
+
     # 显示预测结果
-    output_label.config(text=f'\n识别结果: {prediction}', font=result_font)
+    output_label.config(text=f'\n识别结果: {predicted}', font=font.Font(size=15))
  
 
 root = tk.Tk()

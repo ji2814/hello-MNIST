@@ -3,24 +3,29 @@ import torch
 import torch.nn as nn
 import torchvision
 
-from models.cDCGAN import Generator, Discriminator
+from models.cGAN import Generator, Discriminator
 
 #定义超参数
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-lr = 0.0002
+lr = 1e-4
 num_epochs = 1
 input_dim = 100
-embed_dim = 64
+embed_dim = 64 # 通过嵌入层后的维度
 batch_size = 64
 
 # 加载MNIST数据集
-train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=torchvision.transforms.ToTensor(), download=True)
+transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize([0.5], [0.5])
+]) # 将图像缩放到[-1, 1]之间
+train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=transform, download=True)
+
 # 定义数据加载器
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
 # 定义模型
-G = Generator(input_dim, embed_dim=embed_dim).to(device)
+G = Generator(input_dim=input_dim, embed_dim=embed_dim).to(device)
 D = Discriminator(embed_dim=embed_dim).to(device)
 
 # 定义损失函数和优化器
@@ -29,9 +34,8 @@ criterion = nn.BCELoss()
 optim_G = torch.optim.Adam(G.parameters(), lr=lr)
 optim_D = torch.optim.Adam(D.parameters(), lr=lr)
 
-# 训练cGAN函数
+'''训练cGAN'''
 def train_cGAN(x, conditions):  
-    '''训练cGAN'''  
     # 将真实数据和条件移动到适当的设备（如GPU）  
     real_x = x.to(device)  
     real_conditions = conditions.to(device)  
