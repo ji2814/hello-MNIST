@@ -4,11 +4,11 @@ import torch
 # 加载模型
 model_dir = os.getcwd() + os.sep + 'Recognize' + os.sep + 'models'
 sys.path.append(model_dir)
-from LeNet5 import LeNet5
-model = LeNet5()
+from MLP import MLP
+model = MLP()
 
 # 加载pth文件
-pth_dir = os.path.join(os.getcwd(), "Recognize", "save", "LeNet5.pth")
+pth_dir = os.path.join(os.getcwd(), "Recognize", "save", "MLP.pth")
 model.load_state_dict(torch.load(pth_dir)) 
 
 # 准备一个虚拟输入  

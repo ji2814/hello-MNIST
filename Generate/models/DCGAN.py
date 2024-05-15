@@ -19,7 +19,7 @@ class Generator(nn.Module):
         self.conv1 = nn.Sequential(
             nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1),
             nn.BatchNorm2d(64),
-            nn.ReLU(),
+            nn.ReLU()
         )
         self.conv2 = nn.Sequential(
             nn.ConvTranspose2d(64, 1, 4, stride=2, padding=1),

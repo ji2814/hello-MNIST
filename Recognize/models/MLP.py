@@ -11,6 +11,6 @@ class MLP(nn.Module):
     def forward(self, X):
         X = X.view(-1, 28 *28)
         X = torch.relu(self.fc1(X))
-        X = torch.relu(self.fc2(X))
+        output = torch.relu(self.fc2(X))
 
-        return X
+        return output

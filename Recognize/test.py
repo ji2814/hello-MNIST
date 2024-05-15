@@ -6,10 +6,14 @@ import matplotlib.pyplot as plt
 from models._import import LeNet5, MLP, ResNet, GRU, ViT
 
 # 加载MNIST数据集
-test_dataset = torchvision.datasets.MNIST(root='./data', train=False, transform=torchvision.transforms.ToTensor())
+transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize([0.5], [0.5])
+]) # 将图像缩放到[-1, 1]之间
+test_dataset = torchvision.datasets.MNIST(root='./data', train=False, transform=transform)
 
 # 定义数据加载器
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64, shuffle=True)
 
 # 定义模型
 net = LeNet5()

@@ -13,7 +13,7 @@ class GRU(nn.Module):
         Y, _ = self.gru(X, None)
 
         Y = Y[:, -1, :]
-        Y = self.fc(Y)
+        output = self.fc(Y)
 
-        return Y
+        return output
     
