@@ -31,8 +31,8 @@ class ResNet(nn.Module):
         Y += X
         Y = self.conv4(Y)
         Y = Y.view(-1, 28 * 28)
-        Y = self.fc(Y)
+        output = self.fc(Y)
 
-        return Y
+        return output
 
    

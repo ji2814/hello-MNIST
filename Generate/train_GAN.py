@@ -32,14 +32,17 @@ optim_D = torch.optim.Adam(D.parameters(), lr=lr)
 # 训练GAN函数
 def train_GAN(x):
     '''判别器'''
+    # 将真实数据移动到设备上
     real_x = x.to(device)
 
+    # 更新判别器
     optim_D.zero_grad()
-    
     real_output = D(real_x)
     real_loss = criterion(real_output, torch.ones_like(real_output).to(device))
 
-    fake_x = G(torch.randn([batch_size, input_dim]).to(device)).detach()
+    # 生成假数据
+    niose = torch.randn([batch_size, input_dim])
+    fake_x = G(niose).to(device).detach()
     fake_output = D(fake_x)
     fake_loss = criterion(fake_output, torch.zeros_like(fake_output).to(device))
 
@@ -49,16 +52,18 @@ def train_GAN(x):
     optim_D.step()
 
     '''生成器'''
+    # 更新生成器
     optim_G.zero_grad()
 
-    fake_x = G(torch.randn([batch_size, input_dim]).to(device))
+    # 生成假数据并计算生成器的损失
+    fake_x = G(torch.randn([batch_size, input_dim])).to(device)
     fake_output = D(fake_x)
     loss_G = criterion(fake_output, torch.ones_like(fake_output).to(device))
 
     loss_G.backward()
     optim_G.step()
 
-    return loss_D, loss_G
+    return loss_D.item(), loss_G.item()
 
 # 训练过程
 print(device)

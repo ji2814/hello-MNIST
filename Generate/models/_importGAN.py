@@ -1,5 +1,5 @@
 
-GANnet = "DCGAN" 
+GANnet = "GAN" 
 
 if GANnet == "GAN":
     from .GAN import Generator, Discriminator

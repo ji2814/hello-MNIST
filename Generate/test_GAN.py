@@ -1,7 +1,6 @@
 import os
 import torch
 import matplotlib.pyplot as plt
-from torchvision.utils import make_grid
 
 from models._importGAN import Generator
 

@@ -17,8 +17,9 @@ G.eval()
 model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save', 'Generator_cGAN.pth')
 G.load_state_dict(torch.load(model_dir)) 
 
+'''测试过程'''
 noise = torch.randn(100, 100)
-labels = torch.LongTensor([i for i in range(10) for _ in range(10)])
+labels = torch.Tensor([i for i in range(10) for _ in range(10)])
 
 images = G(noise, labels).unsqueeze(1)
 grid = make_grid(images, nrow=10, normalize=True) # images[-1, 1] -> [0, 1]
