@@ -9,13 +9,17 @@ from models._importGAN import Generator, Discriminator
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 lr = 0.0002
-num_epochs = 10
+num_epochs = 1
 input_dim = 100
 embed_dim = 64
 batch_size = 64
 
 # 加载MNIST数据集
-train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=torchvision.transforms.ToTensor(), download=True)
+transforms = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize([0.5], [0.5])
+]) # 将图像缩放到[-1, 1]之间
+train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=transforms, download=True)
 # 定义数据加载器
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, drop_last = True)
 
@@ -41,7 +45,7 @@ def train_GAN(x):
     real_loss = criterion(real_output, torch.ones_like(real_output).to(device))
 
     # 生成假数据
-    niose = torch.randn([batch_size, input_dim])
+    niose = torch.randn([batch_size, input_dim]).to(device)
     fake_x = G(niose).to(device).detach()
     fake_output = D(fake_x)
     fake_loss = criterion(fake_output, torch.zeros_like(fake_output).to(device))
@@ -56,7 +60,7 @@ def train_GAN(x):
     optim_G.zero_grad()
 
     # 生成假数据并计算生成器的损失
-    fake_x = G(torch.randn([batch_size, input_dim])).to(device)
+    fake_x = G(torch.randn([batch_size, input_dim]).to(device))
     fake_output = D(fake_x)
     loss_G = criterion(fake_output, torch.ones_like(fake_output).to(device))
 
@@ -78,4 +82,4 @@ for epoch in range(num_epochs):
 
 # 保存模型
 current_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save') + os.sep
-torch.save(G.state_dict(), current_dir + 'Generator_GAN.pth')
+torch.save(G.state_dict(), current_dir + 'Generator_DCGAN.pth')

@@ -68,7 +68,7 @@ class Generator(nn.Module):
     def forward(self, x, cond):
         x = x.view(x.size(0), self.input_dim)
         c = self.embed(cond)
-        x = torch.cat([x, c], 1)
+        x = torch.cat([x, c], dim=1)
 
         output = self.model(x)
         

@@ -1,7 +1,6 @@
 import os
 import torch
 import matplotlib.pyplot as plt
-from torchvision.utils import make_grid
 
 from models.difusion.UNet import MyTinyUNet
 from models.difusion.Diffusion import DDPM
@@ -47,12 +46,10 @@ with torch.no_grad():
 # 画出图像
 images = [im.permute(1,2,0).numpy() for im in frames]
 
-# Defining number of rows and columns
 fig = plt.figure(figsize=(8, 8))
 rows = int(len(images) ** (1 / 2))
 cols = round(len(images) / rows)
 
-# Populating figure with sub-plots
 idx = 0
 for r in range(rows):
     for c in range(cols):
@@ -63,5 +60,4 @@ for r in range(rows):
             plt.axis('off')
             idx += 1
 
-# Showing the figure
 plt.show()

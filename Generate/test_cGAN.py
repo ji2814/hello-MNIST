@@ -21,7 +21,7 @@ G.load_state_dict(torch.load(model_dir))
 noise = torch.randn(100, 100)
 labels = torch.Tensor([i for i in range(10) for _ in range(10)])
 
-images = G(noise, labels).unsqueeze(1)
+images = G(noise, labels)
 grid = make_grid(images, nrow=10, normalize=True) # images[-1, 1] -> [0, 1]
 
 # 展示图像

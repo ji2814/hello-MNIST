@@ -10,18 +10,18 @@ from models.difusion.Diffusion import DDPM
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 lr = 1e-3
-num_epochs = 50
+num_epochs = 1
 num_timesteps = 1000
 
 batch_size = 64
 
 # 加载MNIST数据集
-transform = torchvision.transforms.Compose([
+transforms = torchvision.transforms.Compose([
         torchvision.transforms.Resize(32),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.5), (0.5))
     ])
-train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=transform, download=True)
+train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=transforms, download=True)
 # 定义数据加载器
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, drop_last = True)
 
