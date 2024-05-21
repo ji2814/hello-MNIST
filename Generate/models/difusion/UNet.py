@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 def sinusoidal_embedding(n, d):
-    # Returns the standard positional embedding
+    # 位置编码
     embedding = torch.tensor([[i / 10_000 ** (2 * j / d) for j in range(d)] for i in range(n)])
     sin_mask = torch.arange(0, n, 2)
 
@@ -11,7 +11,8 @@ def sinusoidal_embedding(n, d):
 
     return embedding
 
-class MyConv(nn.Module):  
+class MyConv(nn.Module):
+    # 卷积模块 
     def __init__(self, in_c, out_c, kernel_size=3, stride=1, padding=1, activation=None, normalize=True):  
         super(MyConv, self).__init__()  
 
@@ -37,7 +38,8 @@ def MyTinyBlock(in_c, out_c, size=None, normalize=True):
         MyConv(out_c, out_c, normalize=normalize)   # 第三个卷积层  
     )  
 
-def MyTinyUp(in_c, normalize=True):  
+def MyTinyUp(in_c, normalize=True):
+    # 上采样
     return nn.Sequential(  
         MyConv(in_c, in_c//2, normalize=normalize),  # 第一个卷积层，通道数减半  
         MyConv(in_c//2, in_c//4, normalize=normalize),  # 第二个卷积层，通道数再减半  
@@ -45,16 +47,17 @@ def MyTinyUp(in_c, normalize=True):
     )  
 
 class MyTinyUNet(nn.Module):
-  # Here is a network with 3 down and 3 up with the tiny block
+  # UNet网络
+  # 三层上采样和三层下采样部分
     def __init__(self, in_c=1, out_c=1, size=32, n_steps=1000, time_emb_dim=100):
         super(MyTinyUNet, self).__init__()
 
-        # Sinusoidal embedding
+        # 时间序列位置编码
         self.time_embed = nn.Embedding(n_steps, time_emb_dim)
         self.time_embed.weight.data = sinusoidal_embedding(n_steps, time_emb_dim)
         self.time_embed.requires_grad_(False)
 
-        # First half
+        # 左半部分
         self.te1 = self.EmbedFC(time_emb_dim, 1)
         self.b1 = MyTinyBlock(in_c=in_c, out_c=10)
         self.down1 = nn.Conv2d(in_channels=10, out_channels=10, kernel_size=4, stride=2, padding=1)
@@ -65,7 +68,7 @@ class MyTinyUNet(nn.Module):
         self.b3 = MyTinyBlock(20, 40)
         self.down3 = nn.Conv2d(40, 40, 4, 2, 1)
 
-        # Bottleneck
+        # 底层
         self.te_mid = self.EmbedFC(time_emb_dim, 40)
         self.b_mid = nn.Sequential(
             MyConv(40, 20),
@@ -73,7 +76,7 @@ class MyTinyUNet(nn.Module):
             MyConv(20, 40)
         )
 
-        # Second half
+        # 右半部分
         self.up1 = nn.ConvTranspose2d(40, 40, 4, 2, 1)
         self.te4 = self.EmbedFC(time_emb_dim, 80)
         self.b4 = MyTinyUp(80)
@@ -85,7 +88,7 @@ class MyTinyUNet(nn.Module):
         self.b_out = MyTinyBlock(20, 10)
         self.conv_out = nn.Conv2d(10, out_c, 3, 1, 1)
 
-    def forward(self, x, t): # x is (bs, channal, h, w), t is (bs)
+    def forward(self, x, t): # x(bs, channal, h, w), t(bs)
         t = self.time_embed(t)
         n = len(x)
         out1 = self.b1(x + self.te1(t).reshape(n, -1, 1, 1))  # (bs, 10, h/2, w/2)
@@ -103,8 +106,9 @@ class MyTinyUNet(nn.Module):
         out = self.conv_out(out) # (bs, out_c, h, w)
 
         return out
-
+    
     def EmbedFC(self, dim_in, dim_out):
+        # 嵌入层
         return nn.Sequential(nn.Linear(dim_in, dim_out), nn.SiLU(), nn.Linear(dim_out, dim_out))
 
 """

@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 
 class DDPM(nn.Module):
+    # 初始化方法
     def __init__(self, network, num_timesteps, beta_start=0.0001, beta_end=0.02, device=None) -> None:
         super(DDPM, self).__init__()
 
@@ -12,11 +13,11 @@ class DDPM(nn.Module):
         self.alphas = 1.0 - self.betas
         self.alphas_cumprod = torch.cumprod(self.alphas, axis=0) # 累乘
         self.network = network
-        self.sqrt_alphas_cumprod = self.alphas_cumprod ** 0.5 # used in add_noise
-        self.sqrt_one_minus_alphas_cumprod = (1 - self.alphas_cumprod) ** 0.5 # used in add_noise and step
+        self.sqrt_alphas_cumprod = self.alphas_cumprod ** 0.5 
+        self.sqrt_one_minus_alphas_cumprod = (1 - self.alphas_cumprod) ** 0.5 
 
     def add_noise(self, x_start, x_noise, timesteps):
-        # The forward process
+        # 正向扩散
         # x_start and x_noise (bs, n_c, w, h)
         # timesteps (bs)
         s1 = self.sqrt_alphas_cumprod[timesteps] # bs
@@ -26,13 +27,14 @@ class DDPM(nn.Module):
         return s1 * x_start + s2 * x_noise
 
     def reverse(self, x, t):
-        # The network return the estimation of the noise we added
+        # 逆向降噪
         return self.network(x, t)
     
     def step(self, model_output, timestep, sample):
-        # one step of sampling
+        # 采样
         # timestep (1)
         t = timestep
+        # 系数计算
         coef_epsilon = (1-self.alphas)/self.sqrt_one_minus_alphas_cumprod
         coef_eps_t = coef_epsilon[t].reshape(-1,1,1,1)
         coef_first = 1/self.alphas ** 0.5

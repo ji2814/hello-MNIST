@@ -1,7 +1,6 @@
 import os, sys
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torchvision
 
 from models.difusion.UNet import MyTinyUNet
@@ -52,6 +51,11 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
         
+        # 打印loss
         if (i+1) % 100 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'.format(epoch+1, 
                     num_epochs, i+1, len(train_loader), loss.detach().item()))
+            
+# 保存模型
+current_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'save') + os.sep
+torch.save(network.state_dict(), current_dir + 'unet.pth')
