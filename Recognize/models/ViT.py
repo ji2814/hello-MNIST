@@ -35,13 +35,14 @@ class Encoder(nn.Module):
         self.to_patch_embedding = nn.Sequential(  
             nn.Conv2d(in_channels=channels, out_channels=dim, kernel_size=patch_size, stride=patch_size),  
             nn.Flatten(2)
-        )  
+        ) 
  		
 		#添加分类token
-        self.cls_token = nn.Parameter(torch.randn(1, 1, dim))  
+        self.cls_token = nn.Parameter(torch.randn(1, 1, dim)) 
+         
 		# 位置编码层
         self.pos_embedding = nn.Parameter(torch.randn(1, num_patches + 1, dim))  
-  		
+
 		# depth层基本块
         self.transformer = nn.Sequential(*[TransformerBlock(dim, heads, mlp_dim) for _ in range(depth)])  
   

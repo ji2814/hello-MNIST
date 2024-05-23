@@ -11,7 +11,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 lr = 1e-4
 num_epochs = 1
 input_dim = 100
-embed_dim = 64 # 通过嵌入层后的维度
+embed_dim = 10 # 通过嵌入层后的维度
 batch_size = 64
 
 # 加载MNIST数据集
@@ -74,7 +74,7 @@ def train_cGAN(x, conditions):
     loss_G.backward()  
     optim_G.step()  
   
-    return loss_D.item(), loss_G.item()  # 返回损失值而不是tensor
+    return loss_D.item(), loss_G.item()  # 返回损失值
 
 # 训练过程
 print(device)
