@@ -24,7 +24,7 @@ torch.onnx.export(model,               # 模型
                   dummy_input,          # 模型输入 (或是一个tuple，包含多个输入)  
                   onnx_dir,             # 输出的ONNX文件 
                   export_params=True,   # 存储训练好的参数权重在内  
-                  opset_version=11,     # 版本，你可以根据需要更改  
+                  opset_version=11,     # 版本
                   do_constant_folding=True,  # 是否执行常量折叠优化  
                   input_names = ["image"],   # 输入张量的名字  
                   output_names = ["label"]   # 输出张量的名字
