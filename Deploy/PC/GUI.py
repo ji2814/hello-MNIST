@@ -41,6 +41,7 @@ def softmax(x):
     # 获取预测标签（概率最大的索引）  
     return probs 
 
+
 def clear_canvas():
     canvas.delete('all')  # 删除画布上的所有元素
     img_draw.rectangle([(20, 0), (300, 280)], fill='black')  # 在图像上绘制一个黑色的矩形覆盖原有内容
@@ -51,10 +52,7 @@ def draw(event):
     canvas.create_text(x, y, text='●', font='Helvetica 20', fill='white')  # 将椭圆填充颜色设为白色
     img_draw.ellipse([(x - 5, y - 5), (x + 5, y + 5)], fill='white')  # 将椭圆描边颜色设为白色
 
-def recognize_digit():
-    # 从画布中获取图像，调整尺寸为模型所需的大小
-    image = img.crop((0, 0, 300, 300)).resize((28, 28)).convert('L')
-
+def predict(image):
     '''数据预处理'''
     input_data = np.array(image).reshape((1, 1, 28, 28)).astype('float32')
     input_data = input_data / 255.0  # 将像素值缩放到0到1之间
@@ -88,7 +86,15 @@ def recognize_digit():
     output_data = outputs[0]  
 
     probs = softmax(output_data)
-    predicted = np.argmax(probs)  
+    predicted = np.argmax(probs) 
+
+    return predicted
+
+def recognize_digit():
+    # 从画布中获取图像，调整尺寸为模型所需的大小
+    image = img.crop((0, 0, 300, 300)).resize((28, 28)).convert('L')
+
+    predicted = predict(image)
 
     # 显示预测结果
     output_label.config(text=f'\n识别结果: {predicted}', font=font.Font(size=15))
